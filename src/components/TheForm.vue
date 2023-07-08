@@ -1,8 +1,9 @@
 <template>
   <form @submit.prevent='submitForm'>
-    <div class="form-control">
+    <div class="form-control" :class="{invalid: userNamaeValidity === 'invalid'}">
       <label for="user-name">Your Name</label>
-      <input id="user-name" name="user-name" type="text" v-model='submitForm' />
+      <input id="user-name" name="user-name" type="text" v-model.trim='userName' @blur="validateInput" />
+      <p v-if="userNamaeValidity === 'invalid'">please enter a valid name!</p>
     </div>
     <div class="form-control">
       <label for="age">Your Age (Years)</label>
@@ -82,6 +83,9 @@
         <label for="how-other">Other</label>
       </div>
     </div>
+    <div class="form-control">
+      <rating-control v-model="rating"></rating-control>
+    </div>
     <div class='form-control'>
       <input type='checkbox' id='confirm-terms' name='confirm-terms' v-model='confirm' />
       <label for='confirm-terms'>Agree to terms of use?</label>
@@ -93,7 +97,13 @@
 </template>
 
 <script>
+import RatingControll from './RatingControll.vue';
+
 export default {
+  components: {
+    RatingControll,
+  },
+
   data() {
     return {
       userName: '',
@@ -102,6 +112,8 @@ export default {
       interest: [],
       how: null,
       confirm: false,
+      rating: null,
+      userNamaeValidity: 'pending',
     }
   },
 
@@ -113,6 +125,15 @@ export default {
       this.interest = [];
       this.how = null;
       this.confirm = false;
+      this.rating = null;
+    },
+
+    validateInput() {
+      if(this.userName === '') {
+        this.userNamaeValidity = 'invalid';
+      } else {
+        this.userNamaeValidity = 'valid';
+      }
     }
   }
 };
@@ -130,6 +151,14 @@ form {
 
 .form-control {
   margin: 0.5rem 0;
+}
+
+.form-control.invalid input {
+  border-color: red;
+}
+
+.form-control.invalid label {
+  color: red;
 }
 
 label {
